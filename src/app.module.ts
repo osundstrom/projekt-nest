@@ -3,19 +3,21 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GroupsModule } from './groups/groups.module';
 import { GroupusersModule } from './groupusers/groupusers.module';
-import { ActivitiesModule } from './activities/activities.module';
+import { StepsModule } from './steps/steps.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal: true,}),
     AuthModule, 
     UsersModule, 
     GroupsModule, 
     GroupusersModule, 
-    ActivitiesModule, 
-    MongooseModule.forRoot(process.env.MONGO_URL)
+    StepsModule, 
+    MongooseModule.forRoot(process.env.MONGO_URL),
   ],
 })
 
