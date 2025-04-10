@@ -6,7 +6,7 @@ import { GroupusersModule } from './groupusers/groupusers.module';
 import { StepsModule } from './steps/steps.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-
+import { ChallangesModule } from "./challanges/challenges.module";
 
 
 
@@ -18,6 +18,7 @@ import { ConfigModule } from '@nestjs/config';
     GroupsModule, 
     GroupusersModule, 
     StepsModule, 
+    ChallangesModule,
     MongooseModule.forRoot(process.env.MONGO_URL),
   ],
 })
