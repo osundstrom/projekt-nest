@@ -4,10 +4,20 @@ import { AuthService } from "./auth.service";
 import { UsersModule } from "src/users/users.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
+import { JwtStrategy } from "src/strategy/jwt.strategy";
+import { JwtAuthGuard } from "src/guard/jwt.guard";
+import { PassportModule } from '@nestjs/passport';
+import { MongooseModule } from "@nestjs/mongoose";
+import { Users, UsersSchema } from "src/users/users.schema";
 
 @Module({
     imports: [
         UsersModule, 
+        PassportModule,
+        MongooseModule.forFeature([{ 
+            name: Users.name, 
+            schema: UsersSchema }]),
+            
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.register({
             secret: process.env.JWT_KEY,
@@ -15,7 +25,7 @@ import { ConfigModule } from "@nestjs/config";
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService],
+    providers: [AuthService, JwtStrategy, JwtAuthGuard],
     exports: [AuthService],
 })
 export class AuthModule {}

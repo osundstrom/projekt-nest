@@ -3,14 +3,14 @@ import * as bcrypt from "bcryptjs";
 import { Document } from "mongoose";
 
 //----------------------------------------------------------------------------//
-
+//schema för en användare
 export enum Roles {
     USER = "user",
     ADMIN = "admin",
 }
 
 //----------------------------------------------------------------------------//
-
+//schema för en användare
 @Schema({collection: "users"})
 export class Users extends Document {
     @Prop({required: true})
@@ -37,6 +37,8 @@ export class Users extends Document {
     @Prop({required: true, default: () => new Date() })
     created_at: Date;
 
+   
+
 }
 
 
@@ -44,6 +46,7 @@ export const UsersSchema = SchemaFactory.createForClass(Users);
 
 //----------------------------------------------------------------------------//
 
+//Prehook för att hasha lösenord
 UsersSchema.pre<Users>("save", async function (next) {
     try {
     if (this.isNew || this.isModified("password")) {

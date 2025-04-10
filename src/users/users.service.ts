@@ -7,12 +7,14 @@ import { Model } from "mongoose";
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(Users.name) private userModel: Model<Users>) {}
+    constructor(
+        
+    @InjectModel(Users.name) private userModel: Model<Users>
+    ) {}
 
 //----------------------------------------------------------------------------//
-
+    //regristrera en användare
     async registerUser(firstName: string, lastName: string, email: string, password: string, imageUrl: string, role: Roles = Roles.USER) {
-
 
         const newUser = new this.userModel({ 
             firstName, 
@@ -29,8 +31,6 @@ export class UsersService {
 //----------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//
+    
 
-    async findUserByEmail(email: string): Promise<Users | null> {
-        return this.userModel.findOne({ email }).exec();
-    }
 }
