@@ -20,6 +20,9 @@ export class GroupUsers extends Document {
 
     @Prop({required: true, enum: Roles, default: Roles.USER})
     groupRole: Roles; 
+
+    @Prop({required: true, default: 0})
+    totalSteps: number;
 }
 
 export const UserGroupSchema = SchemaFactory.createForClass(GroupUsers);

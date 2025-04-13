@@ -36,7 +36,11 @@ async checkGroupRole(group: string, user: string): Promise<boolean> {
 //----------------------------------------------------------------------------------------------------//
 
 //måste skapa bättre error medd som skickas för felantering senare.- 
-async createChallange(groupId: string, userId: string, targetSteps: number): Promise<Challenges> {
+async createChallange(
+  groupId: string, 
+  userId: string, 
+  targetSteps: number): 
+  Promise<Challenges> {
     
 
     const owner = await this.checkGroupRole(groupId, userId);

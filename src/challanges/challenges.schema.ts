@@ -21,6 +21,9 @@ export class Challenges extends Document {
   @Prop({ default: true })
   status: Boolean; 
 
+  @Prop({ default: 0})
+  totalSteps: number;
+
   @Prop({ default: () => new Date() })
   createdAt: Date;
 
