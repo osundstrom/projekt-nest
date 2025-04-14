@@ -16,16 +16,16 @@ export class challangesController{
     @UseGuards(JwtAuthGuard)
     async createChallange (
         @Param("groupId") groupId: string,
-        @Body() body: {targetSteps: number},
+        @Body() body: {targetSteps: number, challengeName: string},
         @Request() req,
         
         ) {
         
         const userId = req.user._id
         console.log("controller", userId)
-        const {targetSteps } = body;
+        const {targetSteps, challengeName } = body;
 
-        const oneChallange = await this.challangeService.createChallange(groupId, userId, targetSteps);
+        const oneChallange = await this.challangeService.createChallange(groupId, userId, challengeName, targetSteps, );
         
         return {message: "Utmaning skapad", oneChallange}
     }

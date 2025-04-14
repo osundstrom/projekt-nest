@@ -39,6 +39,7 @@ async checkGroupRole(group: string, user: string): Promise<boolean> {
 async createChallange(
   groupId: string, 
   userId: string, 
+  challengeName: string,
   targetSteps: number): 
   Promise<Challenges> {
     
@@ -50,6 +51,7 @@ async createChallange(
     }
 
     const oneChallange = new this.challangeModel({
+        challengeName,
         targetSteps,
         group: groupId,
         status: true,
