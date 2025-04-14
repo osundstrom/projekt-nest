@@ -11,6 +11,8 @@ import { Groups } from 'src/groups/groups.schema';
 
 export class Challenges extends Document {
 
+  @Prop({required: true})
+  challengeName: string;
 
   @Prop({ required: true })
   targetSteps: number;
