@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, UseGuards, Request } from "@nestjs/common";
+import { Body, Controller, Delete, Post, UseGuards, Request, Get } from "@nestjs/common";
 import { GroupsService } from "./groups.service";
 import { JwtAuthGuard } from "../guard/jwt.guard"
 import { Users } from "src/users/users.schema";
@@ -48,6 +48,14 @@ export class GroupController{
 
     return { message: "Användare tillagd i grupp", groupUser };
     }
+//--------------------------------------------------------------------------------------------------------------//
+    @Get("myGroups")
+    @UseGuards(JwtAuthGuard)
+    async getGroupsOfUser(@Request() req) {
+        const userId = req.user._id;
+        const groups = await this.groupsService.getGroupsOfUser(userId);
+        return { message: "Hämtade grupper", groups };
+      }
 
 
 }

@@ -16,7 +16,7 @@ export class GroupsService{
     @InjectModel(GroupUsers.name) private readonly groupUsersModel: Model<GroupUsers>,
 ) 
     {}
-//----------------------------------------------------------------------------------------------------//
+//--------------------------------SKAPA GRUPP--------------------------------------------------------------------//
        async createGroup(groupName: string, info: string) : Promise<Groups> {
             const newGroup = new this.groupModel({ 
                 groupName, 
@@ -25,7 +25,7 @@ export class GroupsService{
             return await newGroup.save();
         }
 
-//----------------------------------------------------------------------------------------------------//
+//---------------------------------LÄGG TILL ÄGARE-------------------------------------------------------------------//
         async addOwnerGroup(groupId: string, userId: string, role: Roles): Promise<GroupUsers> {
             const groupUser = new this.groupUsersModel({
                 group: groupId,
@@ -35,7 +35,7 @@ export class GroupsService{
             return await groupUser.save(); 
         }
 
-//----------------------------------------------------------------------------------------------------//
+//-------------------------------------GÅ MED I GRUPP---------------------------------------------------------------//
         //måste skapa bättre error medd som skickas för felantering senare.- 
         async joinGroup(groupId: string, userId: string): Promise<GroupUsers> {
 
@@ -58,6 +58,18 @@ export class GroupsService{
 
                 return await groupUser.save();
         } 
+
+
+
+//-------------------------------HÄMTA GRUPPER MEDLEM---------------------------------------------------------------------//
+
+        async getGroupsOfUser(userId: string) {
+            const groupsOfUser = await this.groupUsersModel.find({user: userId})
+            .populate("group")
+
+            return groupsOfUser
+
+        }
 
 
 }
