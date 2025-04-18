@@ -61,7 +61,7 @@ async register(
                 throw new Error("ogiltiga uppgifter");
             }
     
-            const payload = {userId: oneUser._id};
+            const payload = {userId: oneUser._id, name: oneUser.firstName + " " + oneUser.lastName, email: oneUser.email};
             const jwtToken = await this.jwtService.signAsync(payload);
 
             return {jwtToken, payload};
@@ -69,5 +69,8 @@ async register(
      catch(error) {
         throw new Error(error.message); //fel vid inlogg
     }}
+
+    //----------------------------------------------------------------------------------//
+
 
 }

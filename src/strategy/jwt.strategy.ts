@@ -19,7 +19,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<Users> {
-    const user = await this.userModel.findById(payload.userId);
-    return user;
+    
+    const user = await this.userModel.findById(payload.userId).select("firstName lastName email totalSteps");
+    console.log(user);
+    if (!user) {
+      throw new Error("användare finns inte");
+    }
+
+    return  user ;
   }
 }

@@ -30,6 +30,15 @@ export class UsersService {
 
 //----------------------------------------------------------------------------//
 
+async getUserSteps(userId: string): Promise<number> {
+    
+    const user = await this.userModel.findById(userId).select("totalSteps");
+    if (!user) {
+        throw new Error("användare finns inte");
+    }
+    return user.totalSteps;
+}
+
 //----------------------------------------------------------------------------//
     
 
