@@ -67,7 +67,10 @@ export class GroupsService{
             const groupsOfUser = await this.groupUsersModel.find({user: userId})
             .populate("group")
 
-            return groupsOfUser
+            return groupsOfUser.map(one => ({
+                group: one.group,
+                groupRole: one.groupRole
+              }));
 
         }
 
