@@ -1,6 +1,8 @@
-import { Body, Controller, Get, UseGuards, Request } from "@nestjs/common";
+import { Body, Controller, Get, UseGuards, Request, Patch, UseInterceptors, Post } from "@nestjs/common";
 import { JwtAuthGuard } from "../guard/jwt.guard";
 import { UsersService } from "./users.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
 
 @Controller("users")
 export class UsersController {
@@ -13,4 +15,7 @@ export class UsersController {
     const userId = req.user._id; 
     return this.usersService.getUserSteps(userId); 
 }
+
+
+
 }

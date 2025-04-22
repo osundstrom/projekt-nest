@@ -61,7 +61,7 @@ async register(
                 throw new Error("ogiltiga uppgifter");
             }
     
-            const payload = {userId: oneUser._id, name: oneUser.firstName + " " + oneUser.lastName, email: oneUser.email};
+            const payload = {userId: oneUser._id, name: oneUser.firstName + " " + oneUser.lastName, email: oneUser.email, imageUrl: oneUser.imageUrl};
             const jwtToken = await this.jwtService.signAsync(payload);
 
             return {jwtToken, payload};

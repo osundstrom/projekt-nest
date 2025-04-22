@@ -7,11 +7,16 @@ import { StepsModule } from './steps/steps.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { ChallangesModule } from "./challanges/challenges.module";
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: `${__dirname}/../uploads`, 
+      serveRoot: "/uploads/", 
+    }),
     ConfigModule.forRoot({isGlobal: true,}),
     AuthModule, 
     UsersModule, 
