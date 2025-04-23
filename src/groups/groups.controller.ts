@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, UseGuards, Request, Get } from "@nestjs/common";
+import { Body, Controller, Delete, Post, UseGuards, Request, Get, Param } from "@nestjs/common";
 import { GroupsService } from "./groups.service";
 import { JwtAuthGuard } from "../guard/jwt.guard"
 import { Users } from "src/users/users.schema";
@@ -51,11 +51,38 @@ export class GroupController{
 //--------------------------------------------------------------------------------------------------------------//
     @Get("myGroups")
     @UseGuards(JwtAuthGuard)
-    async getGroupsOfUser(@Request() req) {
+    async getGroupsOfUser(
+        @Request() req) {
         const userId = req.user._id;
         const groups = await this.groupsService.getGroupsOfUser(userId);
         return { message: "Hämtade grupper", groups };
       }
+//--------------------------------------------------------------------------------------------------------------//
+    @Get(":groupId")
+    @UseGuards(JwtAuthGuard) 
+    async getGroupDetails(
+        @Param("groupId") groupId: string, 
+        @Request() req) {
+        const userId = req.user._id;
+        return this.groupsService.getGroupDetails(groupId, userId);
+}
+
+
+@Get(":groupId/members")
+  @UseGuards(JwtAuthGuard) 
+  async getGroupMembers(
+    @Param("groupId") groupId: string, 
+    @Request() req) {
+    const userId = req.user._id; 
+    
+    return this.groupsService.getGroupMembers(groupId);
+  }
+
+  @Get(":groupId/challenges")
+  @UseGuards(JwtAuthGuard) 
+  async getGroupChallenges(@Param("groupId") groupId: string) {
+    return this.groupsService.getGroupChallenges(groupId);
+  }
 
 
 }

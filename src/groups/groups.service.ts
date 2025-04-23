@@ -14,6 +14,7 @@ export class GroupsService{
     constructor(
     @InjectModel(Groups.name) private groupModel: Model<Groups>,
     @InjectModel(GroupUsers.name) private readonly groupUsersModel: Model<GroupUsers>,
+    @InjectModel(Challenges.name) private readonly challengesModel: Model<Challenges>,
 ) 
     {}
 //--------------------------------SKAPA GRUPP--------------------------------------------------------------------//
@@ -74,10 +75,68 @@ export class GroupsService{
 
         }
 
+//-------------------------------HÄMTA GRUPPER INFO---------------------------------------------------------------------//
+
+        
+async getGroupDetails(groupId: string, userId: string): Promise<any> {
+    
+    const selGroup = await this.groupUsersModel.findOne({ group: groupId, user: userId }).populate("group"); 
+
+    if (!selGroup) {
+        throw new Error("Gruppen finns inte eller så är du inte medlem i den");
+    }
+
+    return {
+        groupId: selGroup.group._id,
+        groupName: selGroup.group.groupName,
+        info: selGroup.group.info,
+        numberMembers: selGroup.group.numberMembers,
+        groupRole: selGroup.groupRole,
+        totalSteps: selGroup.group.totalSteps,
+    };
+}
+
+//-------------------------------HÄMTA GRUPP MEDLEMMAR och utmaningar---------------------------------------------------------------------//
+async getGroupMembers(groupId: string): Promise<any[]> {
+    const groupMembers = await this.groupUsersModel.find({ group: groupId }).populate("user");
+
+    if (!groupMembers || groupMembers.length === 0) {
+        throw new Error("Finns inge medlemmar i gruppen");
+    }
+
+    
+
+    return groupMembers.map(member => ({
+        userId: member.user._id,
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+        email: member.user.email,
+        groupRole: member.groupRole,
+        totalSteps: member.totalSteps,
+    }));
+}
+
+//-------------------------------HÄMTA GRUPP UTMANINGAR---------------------------------------------------------------------//
+async getGroupChallenges(groupId: string): Promise<any[]> {
+    const groupChallenges = await this.challengesModel.find({ group: groupId })
+
+    if (!groupChallenges || groupChallenges.length === 0) {
+        throw new Error("Finns inga utmaningar i gruppen");
+    }
+
+    return groupChallenges.map(challenge => ({
+        challengeId: challenge._id,
+        challengeName: challenge.challengeName,
+        challengeSteps: challenge.targetSteps,
+        challengeGroupId: challenge.group,
+        challengeStatus: challenge.status,
+        challengeCreatedAt: challenge.createdAt,
+    }));
+
 
 }
 
-
+}
        
 
         
