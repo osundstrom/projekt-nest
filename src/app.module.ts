@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { ChallangesModule } from "./challanges/challenges.module";
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ChallengeUsersModule } from './challengeusers/challengeUsers.module';
+
 
 
 
@@ -24,7 +26,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     GroupusersModule, 
     StepsModule, 
     ChallangesModule,
+    ChallengeUsersModule,
     MongooseModule.forRoot(process.env.MONGO_URL),
+   
+    
+    
   ],
 })
 

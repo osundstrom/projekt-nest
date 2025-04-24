@@ -61,6 +61,15 @@ async createChallange(
 }
 
 
+async getChallengeById(challengeId: string): Promise<Challenges> {
 
+    const challenge = await this.challangeModel.findById(challengeId);
 
+    if (!challenge) {
+        throw new Error("Utmaing hittas ej");
+    }
+
+    return challenge;
+
+  }
 }

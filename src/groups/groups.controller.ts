@@ -4,6 +4,9 @@ import { JwtAuthGuard } from "../guard/jwt.guard"
 import { Users } from "src/users/users.schema";
 import { GroupUsers, Roles } from 'src/groupusers/groupsusers.schema';
 import { Groups } from 'src/groups/groups.schema';
+import { CreateGroupDto } from './dto/createGroup.dto'; 
+import { JoinGroupDto } from './dto/JoinGroupDto'; // Import the new DTO
+
 
 @Controller("groups")
 
@@ -17,12 +20,12 @@ export class GroupController{
     @UseGuards(JwtAuthGuard)
     async createGroup(
 
-    @Body() body: { groupName: string, info: string},
+    @Body() createGroupDto: CreateGroupDto, 
     @Request() req,
 
     ) {
     const user = req.user as Users;
-    const { groupName, info } = body;
+    const { groupName, info } = createGroupDto;
 
     const group = await this.groupsService.createGroup(groupName, info);
 
@@ -38,11 +41,11 @@ export class GroupController{
     @UseGuards(JwtAuthGuard)
     async joinGroup(
 
-    @Body() body: { groupId: string},
+    @Body() joinGroupDto: JoinGroupDto, 
     @Request() req,
     ) {
     const user = req.user as Users;
-    const { groupId } = body;
+    const { groupId } = joinGroupDto; 
 
     const groupUser = await this.groupsService.joinGroup(groupId, user._id.toString(),);
 

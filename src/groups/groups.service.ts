@@ -111,6 +111,7 @@ async getGroupMembers(groupId: string): Promise<any[]> {
         firstName: member.user.firstName,
         lastName: member.user.lastName,
         email: member.user.email,
+        imageUrl: member.user.imageUrl,
         groupRole: member.groupRole,
         totalSteps: member.totalSteps,
     }));
@@ -120,9 +121,7 @@ async getGroupMembers(groupId: string): Promise<any[]> {
 async getGroupChallenges(groupId: string): Promise<any[]> {
     const groupChallenges = await this.challengesModel.find({ group: groupId })
 
-    if (!groupChallenges || groupChallenges.length === 0) {
-        throw new Error("Finns inga utmaningar i gruppen");
-    }
+    
 
     return groupChallenges.map(challenge => ({
         challengeId: challenge._id,

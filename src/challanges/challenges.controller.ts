@@ -1,10 +1,10 @@
-import { Body, Controller, Post, UseGuards, Request, Param } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, Request, Param, Get } from "@nestjs/common";
 import { ChallangesService } from "./challenges.service";
 import { JwtAuthGuard } from "src/guard/jwt.guard";
 import { Users } from "src/users/users.schema";
 
 
-@Controller("challanges")
+@Controller("challenges")
 
 export class challangesController{
 
@@ -12,7 +12,7 @@ export class challangesController{
         private readonly challangeService: ChallangesService) 
         {}
 
-    @Post("createChallange/:groupId")
+    @Post("createChallenge/:groupId")
     @UseGuards(JwtAuthGuard)
     async createChallange (
         @Param("groupId") groupId: string,
@@ -30,5 +30,16 @@ export class challangesController{
         return {message: "Utmaning skapad", oneChallange}
     }
 
+
+    @Get(":challengeId")
+    @UseGuards(JwtAuthGuard)
+    async getChallangeById(
+        @Param("challengeId") challengeId: string,
+        @Request() req,
+        ) {
+            const challenge = await this.challangeService.getChallengeById(challengeId);
+            return challenge ;
+
+}
 }
 
