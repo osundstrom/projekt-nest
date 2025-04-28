@@ -1,7 +1,7 @@
 import { Groups } from "src/groups/groups.schema";
 import { GroupUsers, Roles } from "src/groupusers/groupsusers.schema";
 import { Challenges } from "./challenges.schema";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Injectable } from "@nestjs/common";
 
@@ -60,7 +60,7 @@ async createChallange(
     return await oneChallange.save()
 }
 
-
+//----------------------------------------------------------------------------------------------------//
 async getChallengeById(challengeId: string): Promise<Challenges> {
 
     const challenge = await this.challangeModel.findById(challengeId);
@@ -72,4 +72,44 @@ async getChallengeById(challengeId: string): Promise<Challenges> {
     return challenge;
 
   }
+
+  //----------------------------------------------------------------------------------------------------//
+
+  async updateChallengeStatus(
+    challengeId: string, 
+    userId: string, 
+    newStatus: boolean,): 
+    Promise<Challenges> {
+
+    const challengeIdObject = new Types.ObjectId(challengeId);
+    const userIdObject = new Types.ObjectId(userId);
+
+
+    const challenge = await this.challangeModel.findById(challengeIdObject);
+    if (!challenge) {
+      throw new Error("Utmaning hittas ej");
+    }
+
+    const groupId = challenge.group.toString();
+    const groupObjectId = new Types.ObjectId(groupId);
+
+    const memberGroup = await this.groupUsersModel.findOne({
+      user: userIdObject,
+      group: groupObjectId,
+    });
+
+    if (!memberGroup) {
+      throw new Error("Användare är ej med i denna grupp");
+    }
+
+    const updatedChallenge = await this.challangeModel.findByIdAndUpdate(
+      challengeIdObject,
+      { $set: { status: newStatus }},
+      { new: true }
+    );
+
+    return updatedChallenge;
+    
+}
+
 }
