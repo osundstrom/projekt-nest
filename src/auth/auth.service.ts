@@ -72,5 +72,41 @@ async register(
 
     //----------------------------------------------------------------------------------//
 
+    async updateUserImage(userId: string, imageUrl: string) {
+        try {
+            const user = await this.userModel.findByIdAndUpdate(userId, { imageUrl }, { new: true });
+            return {imageUrl: user.imageUrl};
+        } catch (error) {
+            throw new Error("Kunde inte uppdatera profilbilden");
+        }
+    }
+
+    //----------------------------------------------------------------------------------//
+
+    async updateUser(userId: string, firstName: string, lastName: string, email: string) {
+        try {
+           
+            const updatedUser = await this.userModel.findByIdAndUpdate(
+                userId,
+                { firstName, lastName, email },
+                { new: true } 
+            );
+    
+            if (!updatedUser) {
+                throw new Error("Användare finns inte");
+            }
+    
+            return {
+                message: "Uppdaterad",
+                user: {
+                    firstName: updatedUser.firstName,
+                    lastName: updatedUser.lastName,
+                    email: updatedUser.email,
+                },
+            };
+        } catch (error) {
+            throw new Error("Kunde inte uppdatera");
+        }
+    }
 
 }
