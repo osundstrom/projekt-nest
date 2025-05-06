@@ -9,14 +9,18 @@ import { JwtAuthGuard } from "src/guard/jwt.guard";
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Users, UsersSchema } from "src/users/users.schema";
+import { GroupUsers, UserGroupSchema } from "src/groupusers/groupsusers.schema";
+import { ChallengeUsers, ChallengeUsersSchema } from "src/challengeUsers/challengeUsers.schema";
 
 @Module({
     imports: [
         UsersModule, 
         PassportModule,
-        MongooseModule.forFeature([{ 
-            name: Users.name, 
-            schema: UsersSchema }]),
+        MongooseModule.forFeature([
+            { name: Users.name, schema: UsersSchema}, 
+            {name: GroupUsers.name, schema: UserGroupSchema},
+            {name: ChallengeUsers.name, schema: ChallengeUsersSchema},
+        ]),
             
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.register({

@@ -1,4 +1,4 @@
-import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch } from "@nestjs/common";
+import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/users/users.schema";
 import { JwtAuthGuard } from "src/guard/jwt.guard";
@@ -94,7 +94,11 @@ export class AuthController{
             return this.authService.updateUser(userId, firstName, lastName, email);
         }
 
-    
-
+        @Delete("deleteUser")
+        @UseGuards(JwtAuthGuard)
+        async deleteUser(@Request() req) {
+            const userId = req.user._id;
+            return this.authService.deleteUser(userId);
+        }
 
 }

@@ -1,9 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Groups } from "./groups.schema";
 import { Model } from "mongoose";
 import { GroupUsers, Roles } from "src/groupusers/groupsusers.schema";
 import { Challenges } from "src/challanges/challenges.schema";
+import { ChallengeUsers } from "src/challengeUsers/challengeUsers.schema";
+import { error } from "console";
 
 
 @Injectable({})
@@ -15,10 +17,18 @@ export class GroupsService{
     @InjectModel(Groups.name) private groupModel: Model<Groups>,
     @InjectModel(GroupUsers.name) private readonly groupUsersModel: Model<GroupUsers>,
     @InjectModel(Challenges.name) private readonly challengesModel: Model<Challenges>,
+    @InjectModel(ChallengeUsers.name) private readonly challengeUsersModel: Model<ChallengeUsers>,
 ) 
     {}
 //--------------------------------SKAPA GRUPP--------------------------------------------------------------------//
        async createGroup(groupName: string, info: string) : Promise<Groups> {
+
+        const existingGroup = await this.groupModel.findOne({ groupName: groupName.trim() });
+
+        if (existingGroup) {
+            throw new ConflictException("gruppnamn måste vara unika, detta finns redan");
+        }
+
             const newGroup = new this.groupModel({ 
                 groupName, 
                 info,
@@ -37,7 +47,6 @@ export class GroupsService{
         }
 
 //-------------------------------------GÅ MED I GRUPP---------------------------------------------------------------//
-        //måste skapa bättre error medd som skickas för felantering senare.- 
         async joinGroup(groupId: string, userId: string): Promise<GroupUsers> {
 
             const existingUser = await this.groupUsersModel.findOne({ 
@@ -133,6 +142,42 @@ async getGroupChallenges(groupId: string): Promise<any[]> {
     }));
 
 
+}
+
+
+//-------------------------------RADERA---------------------------------------------------------------------//
+async deleteGroup(groupId: string, userId: string): Promise<any> {
+    
+    const group = await this.groupModel.findById(groupId);
+    if (!group) {
+        throw new NotFoundException("Grupp  hittades inte");
+    }
+
+    
+    const groupUser = await this.groupUsersModel.findOne({
+        group: groupId,
+        user: userId,
+    });
+
+    if (!groupUser || groupUser.groupRole !== Roles.OWNER) {
+        throw new ForbiddenException("Endast ägaren kan hantera gruppen");
+    }
+
+    const challengesThisGroup = await this.challengesModel.find({ group: groupId }).select("_id");
+    const challengeIdThisGroup = challengesThisGroup.map(c => c._id.toString());
+
+    if (challengeIdThisGroup.length > 0) {
+        await this.challengeUsersModel.deleteMany({ challenge: { $in: challengeIdThisGroup } });
+    }
+
+
+    await this.groupUsersModel.deleteMany({ group: groupId });
+   
+    await this.challengesModel.deleteMany({ group: groupId });
+
+    await this.groupModel.findByIdAndDelete(group);
+
+    return { message: ` '${group.groupName}' har raderats.` };
 }
 
 }

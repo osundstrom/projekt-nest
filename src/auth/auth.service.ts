@@ -3,8 +3,11 @@ import { UsersService } from "src/users/users.service";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { Roles, Users } from "src/users/users.schema";
+import * as fs from 'fs';
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
+import { GroupUsers } from "src/groupusers/groupsusers.schema";
+import { ChallengeUsers } from "src/challengeUsers/challengeUsers.schema";
 
 
 
@@ -13,6 +16,8 @@ import { InjectModel } from "@nestjs/mongoose";
 export class AuthService{
     constructor(
         @InjectModel(Users.name) private readonly userModel: Model<Users>,
+        @InjectModel(GroupUsers.name) private readonly groupUsersModel: Model<GroupUsers>,
+        @InjectModel(ChallengeUsers.name) private readonly challengeUsersModel: Model<ChallengeUsers>,
         private usersService: UsersService,
         private readonly jwtService: JwtService,
     ) {};
@@ -108,5 +113,41 @@ async register(
             throw new Error("Kunde inte uppdatera");
         }
     }
+
+//------------------------------Radera----------------------------------------------------//
+
+    async deleteUser(userId: string) {
+        
+            const deleteThisUser = await this.userModel.findById(userId);
+
+            if (!deleteThisUser) {
+                console.log("Användare finns inte");
+            }
+
+            try {
+                if(deleteThisUser.imageUrl) {
+                    const imagePath = `./uploads/${deleteThisUser.imageUrl.split("/").pop()}`;
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlinkSync(imagePath);
+                        console.log("Bild borttagen");
+                    }else {
+                        console.log("Ingen bild att ta bort");
+                    }
+
+                }
+
+                await this.groupUsersModel.deleteMany({ user: userId });
+
+                await this.challengeUsersModel.deleteMany({ user: userId});
+                
+                await this.userModel.findByIdAndDelete(userId);
+
+
+            return { message: "Användare borttagen" };
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
 }

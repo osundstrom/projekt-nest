@@ -88,5 +88,18 @@ export class GroupController{
   }
 
 
+//--------------------------------------------------------------------------------------------------------------//
+
+@Delete(":groupId/delete")
+    @UseGuards(JwtAuthGuard)
+    async deleteGroup(
+        @Param("groupId") groupId: string,
+        @Request() req,
+    ) {
+        const userId = req.user._id; 
+        return this.groupsService.deleteGroup(groupId, userId.toString());
+    }
+
+
 }
 
