@@ -76,3 +76,5 @@ export class StepsService {
 return saveSteps;
 
 }}
+
+//använder ej denna längre?, hämtar ej forntend. 
