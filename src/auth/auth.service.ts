@@ -149,5 +149,62 @@ async register(
         }
     }
 
+//----------------------------------------------------------------------------------//
+    async validateOAuthLogin(user: any) {
+        const { googleId, email, firstName, lastName, imageUrl } = user;
+
+        const existingUser = await this.userModel.findOne({ googleId });
+
+        if (existingUser) {
+            return existingUser;
+        }
+
+        user = await this.userModel.findOne({ email });
+        if (user) {
+            user.googleId = googleId;
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.imageUrl = imageUrl;
+            user.role = Roles.USER;
+            await user.save();
+            return user;
+        }
+
+        const newUser = await this.userModel.create({
+            googleId,
+            email,
+            firstName,
+            lastName,
+            imageUrl,
+        });
+
+        return newUser;
+    }
+
+
+    async loginOAuthUser(user: Users): Promise<{ token: string, payload: any }> {
+        
+        if (!user || !user._id) {
+            throw new Error("Användare saknas");
+        }
+
+        const onePayload = {
+            userId: user._id,
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName, 
+            lastName: user.lastName,   
+            imageUrl: user.imageUrl,  
+        };
+
+        const jwtServiceSend = await this.jwtService.signAsync(onePayload);
+
+
+        return {
+            token: jwtServiceSend,
+            payload: onePayload,
+        };
+    }
+
 
 }

@@ -11,11 +11,12 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Users, UsersSchema } from "src/users/users.schema";
 import { GroupUsers, UserGroupSchema } from "src/groupusers/groupsusers.schema";
 import { ChallengeUsers, ChallengeUsersSchema } from "src/challengeUsers/challengeUsers.schema";
+import { GoogleStrategy } from "src/strategy/google.strategy";
 
 @Module({
     imports: [
         UsersModule, 
-        PassportModule,
+        PassportModule.register({ defaultStrategy: "jwt" }),
         MongooseModule.forFeature([
             { name: Users.name, schema: UsersSchema}, 
             {name: GroupUsers.name, schema: UserGroupSchema},
@@ -29,7 +30,7 @@ import { ChallengeUsers, ChallengeUsersSchema } from "src/challengeUsers/challen
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtStrategy, JwtAuthGuard],
+    providers: [AuthService, JwtStrategy, JwtAuthGuard, GoogleStrategy],
     exports: [AuthService],
 })
 export class AuthModule {}

@@ -22,8 +22,8 @@ export class Users extends Document {
     @Prop({unique: true, required: true})
     email: string;
 
-    @Prop({required: true})
-    password: string;
+    @Prop()
+    password?: string;
 
     @Prop({required: false})
     imageUrl?: string;
@@ -36,7 +36,9 @@ export class Users extends Document {
 
     @Prop({required: true, default: () => new Date() })
     created_at: Date;
-
+    
+    @Prop({unique: true, required: false})
+    googleId?: string;
    
 
 }
@@ -49,6 +51,12 @@ export const UsersSchema = SchemaFactory.createForClass(Users);
 //Prehook för att hasha lösenord
 UsersSchema.pre<Users>("save", async function (next) {
     try {
+
+        if (!this.password || !this.isModified("password")) {
+            return next();
+          }
+
+
     if (this.isNew || this.isModified("password")) {
         const hashPassword = await bcrypt.hash(this.password, parseInt(process.env.HASH));
         this.password = hashPassword;

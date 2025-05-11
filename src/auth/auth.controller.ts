@@ -1,9 +1,12 @@
-import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete } from "@nestjs/common";
+import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete, Req,Res} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/users/users.schema";
 import { JwtAuthGuard } from "src/guard/jwt.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
+import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+
 
 
 @Controller("auth")
@@ -100,5 +103,43 @@ export class AuthController{
             const userId = req.user._id;
             return this.authService.deleteUser(userId);
         }
+
+
+
+    //----- google login  oauth-------------------------------------------------------------//
+    @Get("google")
+    @UseGuards(AuthGuard("google"))
+    async googleAuth(@Req() req) {
+        // startar OAuth (google inloggning)
+    }
+
+
+    @Get("google/callback")
+    @UseGuards(AuthGuard("google"))
+    async googleAuthRedirect(@Req() req, @Res() res: Response) {
+
+        const user = req.user;
+        if (!user) {
+            // tillbaka till loign, bord eläggas mer errorhantering
+            return res.redirect(`http://localhost:5173/login`);
+        }
+
+        // skapa JWT
+        const data = await this.authService.loginOAuthUser(user);
+
+        if (data.payload && data.token) {
+            const token = data.token;
+            const payload = data.payload;
+
+            const encodedPayload = encodeURIComponent(JSON.stringify(payload));
+
+            res.redirect(`http://localhost:5173/oauth/login?token=${token}&payload=${encodedPayload}`);
+        }   
+
+        else {
+            //fel vid inlogg
+            return res.redirect(`http://localhost:5173/login`);
+        }
+    }
 
 }
