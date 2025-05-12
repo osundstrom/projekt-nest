@@ -4,7 +4,7 @@ import { Groups } from "./groups.schema";
 import { Model } from "mongoose";
 import { GroupUsers, Roles } from "src/groupusers/groupsusers.schema";
 import { Challenges } from "src/challanges/challenges.schema";
-import { ChallengeUsers } from "src/challengeusers/challengeUsers.schema";
+import { ChallengeUsers } from "../challengeusers/challengeUsers.schema";
 import { error } from "console";
 
 

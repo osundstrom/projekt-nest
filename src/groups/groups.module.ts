@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Groups, GroupsSchema } from './groups.schema';
 import { GroupUsers, UserGroupSchema } from 'src/groupusers/groupsusers.schema';
 import { Challenges, ChallengesSchema } from '../challanges/challenges.schema';
-import { ChallengeUsers, ChallengeUsersSchema } from 'src/challengeusers/challengeUsers.schema';
+import { ChallengeUsers, ChallengeUsersSchema } from "../challengeusers/challengeUsers.schema";
 
 
 @Module({

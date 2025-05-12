@@ -10,7 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Users, UsersSchema } from "src/users/users.schema";
 import { GroupUsers, UserGroupSchema } from "src/groupusers/groupsusers.schema";
-import { ChallengeUsers, ChallengeUsersSchema } from "src/challengeusers/challengeUsers.schema";
+import { ChallengeUsers, ChallengeUsersSchema } from "../challengeusers/challengeUsers.schema";
 import { GoogleStrategy } from "src/strategy/google.strategy";
 
 @Module({
