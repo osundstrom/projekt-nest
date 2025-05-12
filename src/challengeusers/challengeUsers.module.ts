@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ChallengeUsers, ChallengeUsersSchema } from './Challengeusers.schema';
+import { ChallengeUsers, ChallengeUsersSchema } from './challengeUsers.schema';
 import { ChallengeUsersService } from './challengeUsers.service';
 import { Challenges, ChallengesSchema } from 'src/challanges/challenges.schema';
 import { Users, UsersSchema } from 'src/users/users.schema';
