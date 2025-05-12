@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { GroupUsers } from "src/groupusers/groupsusers.schema";
-import { ChallengeUsers } from "src/challengeUsers/challengeUsers.schema";
+import { ChallengeUsers } from "src/challengeusers/challengeUsers.schema";
 
 
 

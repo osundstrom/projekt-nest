@@ -4,9 +4,8 @@ import { GroupController } from './groups.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Groups, GroupsSchema } from './groups.schema';
 import { GroupUsers, UserGroupSchema } from 'src/groupusers/groupsusers.schema';
-import { ChallangesModule } from 'src/challanges/challenges.module';
 import { Challenges, ChallengesSchema } from '../challanges/challenges.schema';
-import { ChallengeUsers, ChallengeUsersSchema } from 'src/challengeUsers/challengeUsers.schema';
+import { ChallengeUsers, ChallengeUsersSchema } from 'src/challengeusers/challengeUsers.schema';
 
 
 @Module({
