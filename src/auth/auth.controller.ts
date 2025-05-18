@@ -1,4 +1,4 @@
-import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete, Req,Res} from "@nestjs/common";
+import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete, Req,Res, BadRequestException} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/users/users.schema";
 import { JwtAuthGuard } from "src/guard/jwt.guard";
@@ -48,7 +48,6 @@ export class AuthController{
     @Post("login")
     async login(@Body() body: { email: string, password: string }) {
         const user = await this.authService.login(body.email, body.password);
-
         return user;
     }
 

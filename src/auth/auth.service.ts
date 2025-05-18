@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { UsersService } from "src/users/users.service";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -32,11 +32,25 @@ async register(
     ) {
 
     try {
+        if (!email.includes('@')) {
+            throw new BadRequestException("E-postadressen måste innehålla ett @.");
+        }
+
+        if (password.length < 7) {
+            throw new BadRequestException("Lösenordet måste vara minst 7 tecken långt.");
+        }
+        if (!/[A-Z]/.test(password)) {
+            throw new BadRequestException("Lösenordet måste innehålla minst en stor bokstav.");
+        }
+        if (!/[0-9]/.test(password)) {
+            throw new BadRequestException("Lösenordet måste innehålla minst en siffra.");
+        }
         
         const existUser = await this.userModel.findOne({email});
         if (existUser) {
-            throw new Error("Användaren finns redan");
+            throw new BadRequestException("Användaren finns redan");
         }
+        
         
         const newUser = await this.usersService.registerUser(firstName, lastName, email, password, imageUrl, role);
         return {
@@ -45,7 +59,9 @@ async register(
         };
 
     } catch (error) {
-        throw new Error(error.message); //fel vid reg
+        if (error instanceof BadRequestException) {
+            throw error; 
+        }
     }
 }
 
