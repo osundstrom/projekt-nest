@@ -1,4 +1,4 @@
-import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete, Req,Res, BadRequestException} from "@nestjs/common";
+import { Body, Request, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, Put, Patch, Delete, Req, Res, BadRequestException } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/users/users.schema";
 import { JwtAuthGuard } from "src/guard/jwt.guard";
@@ -11,9 +11,9 @@ import { Response } from 'express';
 
 @Controller("auth")
 
-export class AuthController{
+export class AuthController {
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
     @Post("register")
     @UseInterceptors(
@@ -34,16 +34,16 @@ export class AuthController{
                 callback(null, true);
             }
         }),
-        )
+    )
 
-    async register(@Body() body: { firstName: string, lastName: string, email: string, password: string, role: Roles }, 
-    @UploadedFile() file: Express.Multer.File) {
-        const imageUrl = file ? `/uploads/${file.filename}` : null; 
+    async register(@Body() body: { firstName: string, lastName: string, email: string, password: string, role: Roles },
+        @UploadedFile() file: Express.Multer.File) {
+        const imageUrl = file ? `/uploads/${file.filename}` : null;
 
         return this.authService.register(body.firstName, body.lastName, body.email, body.password, imageUrl, body.role);
     }
 
-    
+
 
     @Post("login")
     async login(@Body() body: { email: string, password: string }) {
@@ -73,35 +73,35 @@ export class AuthController{
                 }
                 callback(null, true);
             }
-        }), )
+        }),)
 
-        async updateUserImage( 
-            @UploadedFile() file: Express.Multer.File,
-            @Request() req  ) { 
-            const userId = req.user._id;
-            const imageUrl = file ? `/uploads/${file.filename}` : null; 
-            return this.authService.updateUserImage(userId, imageUrl);
-        }
+    async updateUserImage(
+        @UploadedFile() file: Express.Multer.File,
+        @Request() req) {
+        const userId = req.user._id;
+        const imageUrl = file ? `/uploads/${file.filename}` : null;
+        return this.authService.updateUserImage(userId, imageUrl);
+    }
 
 
-        @Patch("updateUser")
-        @UseGuards(JwtAuthGuard)
-        async updateUser(
-            @Body() body: { firstName: string; lastName: string; email: string },
-            @Request() req
-        ) {
-            const userId = req.user._id;
-            const { firstName, lastName, email } = body;
-        
-            return this.authService.updateUser(userId, firstName, lastName, email);
-        }
+    @Patch("updateUser")
+    @UseGuards(JwtAuthGuard)
+    async updateUser(
+        @Body() body: { firstName: string; lastName: string; email: string },
+        @Request() req
+    ) {
+        const userId = req.user._id;
+        const { firstName, lastName, email } = body;
 
-        @Delete("deleteUser")
-        @UseGuards(JwtAuthGuard)
-        async deleteUser(@Request() req) {
-            const userId = req.user._id;
-            return this.authService.deleteUser(userId);
-        }
+        return this.authService.updateUser(userId, firstName, lastName, email);
+    }
+
+    @Delete("deleteUser")
+    @UseGuards(JwtAuthGuard)
+    async deleteUser(@Request() req) {
+        const userId = req.user._id;
+        return this.authService.deleteUser(userId);
+    }
 
 
 
@@ -116,29 +116,28 @@ export class AuthController{
     @Get("google/callback")
     @UseGuards(AuthGuard("google"))
     async googleAuthRedirect(@Req() req, @Res() res: Response) {
-
         const user = req.user;
         if (!user) {
-            // tillbaka till loign, bord eläggas mer errorhantering
-            return res.redirect(`http://localhost:5173/login`);
+            console.log("Ingen användare hittades");
+            return res.redirect(`http://localhost:5173/login?error=no_user`); //error url
+        }
+        try {
+            // skapa JWT
+            const data = await this.authService.loginOAuthUser(user);
+            if (data.payload && data.token) {
+                const token = data.token;
+                const payload = data.payload;
+                const encodedPayload = encodeURIComponent(JSON.stringify(payload));
+                res.redirect(`http://localhost:5173/oauth/login?token=${token}&payload=${encodedPayload}`);
+            }
+            else {
+                console.log("fel vid inloggning");
+                return res.redirect(`http://localhost:5173/login?error=oauth_error`); //error url
+            }
+        } catch (error) {
+            console.error("oväntat fel", error);
+            return res.redirect(`http://localhost:5173/login?error=oauth_error`); //error url
         }
 
-        // skapa JWT
-        const data = await this.authService.loginOAuthUser(user);
-
-        if (data.payload && data.token) {
-            const token = data.token;
-            const payload = data.payload;
-
-            const encodedPayload = encodeURIComponent(JSON.stringify(payload));
-
-            res.redirect(`http://localhost:5173/oauth/login?token=${token}&payload=${encodedPayload}`);
-        }   
-
-        else {
-            //fel vid inlogg
-            return res.redirect(`http://localhost:5173/login`);
-        }
     }
-
 }
