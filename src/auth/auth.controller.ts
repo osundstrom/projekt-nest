@@ -7,6 +7,10 @@ import { diskStorage } from "multer";
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 
+import { RegisterUserDto } from "./dto/RegisterUserDto";
+import { LoginUserDto } from "./dto/LoginUserDto";
+import { UpdateUserDto } from "./dto/updateUSerDto";
+
 
 
 @Controller("auth")
@@ -36,11 +40,10 @@ export class AuthController {
         }),
     )
 
-    async register(@Body() body: { firstName: string, lastName: string, email: string, password: string, role: Roles },
+    async register(@Body() registerUserDto: RegisterUserDto ,
         @UploadedFile() file: Express.Multer.File) {
         const imageUrl = file ? `/uploads/${file.filename}` : null;
-
-        return this.authService.register(body.firstName, body.lastName, body.email, body.password, imageUrl, body.role);
+        return this.authService.register(registerUserDto.firstName, registerUserDto.lastName, registerUserDto.email, registerUserDto.password, imageUrl, registerUserDto.role);
     }
 
 

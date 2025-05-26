@@ -14,18 +14,25 @@ export class UsersService {
 
 //----------------------------------------------------------------------------//
     //regristrera en användare
-    async registerUser(firstName: string, lastName: string, email: string, password: string, imageUrl: string, role: Roles = Roles.USER) {
+    async registerUser(firstName: string, lastName: string, email: string, passwordInput: string, imageUrl: string | null, role: Roles = Roles.USER): Promise<Users> {
+        try {
 
-        const newUser = new this.userModel({ 
+        const newUser: Partial<Users> = { 
             firstName, 
             lastName, 
-            email: email.toLowerCase(), 
-            password,
+            email: email.toLowerCase().trim(), 
+            password: passwordInput,
             imageUrl,
             role,
-        });
+        };
         console.log(newUser.role);
-        return newUser.save();
+        const newUserDocument = new this.userModel(newUser);
+        return await newUserDocument.save();
+    }
+        catch (error) {
+            console.error("Error registering user:", error);
+            throw new Error("Kunde inte registrera användaren");
+        }
     }
 
 //----------------------------------------------------------------------------//

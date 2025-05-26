@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { UsersService } from "src/users/users.service";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -12,7 +12,7 @@ import { ChallengeUsers } from "../challengeusers/challengeusers.schema";
 
 
 
-
+@Injectable()
 export class AuthService{
     constructor(
         @InjectModel(Users.name) private readonly userModel: Model<Users>,
@@ -27,7 +27,7 @@ async register(
     lastName: string, 
     email: string, 
     password: string, 
-    imageUrl: string, 
+    imageUrl: string | null,
     role: Roles
     ) {
 
@@ -59,9 +59,12 @@ async register(
         };
 
     } catch (error) {
-        if (error instanceof BadRequestException) {
-            throw error; 
+        if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+            throw error;
         }
+       
+        console.error(error); 
+        throw new InternalServerErrorException(" serverfel vid registrering");
     }
 }
 
@@ -168,6 +171,11 @@ async register(
 //----------------------------------------------------------------------------------//
     async validateOAuthLogin(user: any) {
         const { googleId, email, firstName, lastName, imageUrl } = user;
+
+        if (!googleId) { 
+        console.error("googleId saknas");
+        throw new InternalServerErrorException("Kunde inte hämta nödvändig information från Google");
+    }
 
         const existingUser = await this.userModel.findOne({ googleId });
 

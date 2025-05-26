@@ -37,7 +37,7 @@ export class Users extends Document {
     @Prop({required: true, default: () => new Date() })
     created_at: Date;
     
-    @Prop({unique: true, required: false})
+    @Prop({unique: true, required: false, sparse: true})
     googleId?: string;
    
 
