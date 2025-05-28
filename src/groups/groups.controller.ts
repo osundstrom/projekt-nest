@@ -5,7 +5,7 @@ import { Users } from "src/users/users.schema";
 import { GroupUsers, Roles } from 'src/groupusers/groupsusers.schema';
 import { Groups } from 'src/groups/groups.schema';
 import { CreateGroupDto } from './dto/createGroup.dto'; 
-import { JoinGroupDto } from './dto/JoinGroupDto'; // Import the new DTO
+import { JoinGroupDto } from './dto/JoinGroupDto'; 
 
 
 @Controller("groups")
@@ -88,7 +88,7 @@ export class GroupController{
   }
 
 
-//--------------------------------------------------------------------------------------------------------------//
+//----------------------------------------Radera hrupp----------------------------------------------------------------------//
 
 @Delete(":groupId/delete")
     @UseGuards(JwtAuthGuard)
@@ -100,6 +100,15 @@ export class GroupController{
         return this.groupsService.deleteGroup(groupId, userId.toString());
     }
 
-
+//---------------------------------------Lämna gruppp-----------------------------------------------------------------------//
+@Delete(":groupId/leave")
+    @UseGuards(JwtAuthGuard)
+    async leaveGroup(
+        @Param("groupId") groupId: string,
+        @Request() req,
+    ) {
+        const userId = req.user._id; 
+        return this.groupsService.leaveGroup(groupId, userId.toString());
+    }
 }
 

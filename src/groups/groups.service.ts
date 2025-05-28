@@ -105,6 +105,42 @@ async getGroupDetails(groupId: string, userId: string): Promise<any> {
     };
 }
 
+
+
+
+//-------------------------------Lämna grupp---------------------------------------------------------------------//
+
+async leaveGroup(groupId: string, userId: string): Promise<any> {
+    const groupUser = await this.groupUsersModel.findOne({ group: groupId, user: userId });
+
+    if (!groupUser) {
+        throw new NotFoundException("Du är inte medlem i denna grupp");
+    }
+
+    if (groupUser.groupRole === Roles.OWNER) {
+        throw new ForbiddenException("Ägaren kan inte lämna gruppen. Måste radera ");
+    }
+
+    await this.groupUsersModel.deleteOne({ group: groupId, user: userId });
+    
+    await this.groupModel.findByIdAndUpdate(groupId, { $inc: { numberMembers: -1 } });
+
+    const groupChallenges = await this.challengesModel.find({ group: groupId }).select("_id");
+    const challengeIdsForThisGroup = groupChallenges.map(challenge => challenge._id.toString());
+
+    if (challengeIdsForThisGroup.length > 0) {
+            const deleteChallengeUserResult = await this.challengeUsersModel.deleteMany({
+                challenge: { $in: challengeIdsForThisGroup }, 
+                user: userId                                  
+            });
+            
+        }
+
+    return { message: "Du har lämnat gruppen" };
+}
+
+
+
 //-------------------------------HÄMTA GRUPP MEDLEMMAR och utmaningar---------------------------------------------------------------------//
 async getGroupMembers(groupId: string): Promise<any[]> {
     const groupMembers = await this.groupUsersModel.find({ group: groupId }).populate("user");

@@ -49,8 +49,8 @@ export class AuthController {
 
 
     @Post("login")
-    async login(@Body() body: { email: string, password: string }) {
-        const user = await this.authService.login(body.email, body.password);
+    async login(@Body() loginUserDto: LoginUserDto) {
+        const user = await this.authService.login(loginUserDto.email, loginUserDto.password);
         return user;
     }
 
@@ -90,13 +90,13 @@ export class AuthController {
     @Patch("updateUser")
     @UseGuards(JwtAuthGuard)
     async updateUser(
-        @Body() body: { firstName: string; lastName: string; email: string },
+        @Body() UpdateUserDto: UpdateUserDto,
         @Request() req
     ) {
         const userId = req.user._id;
-        const { firstName, lastName, email } = body;
 
-        return this.authService.updateUser(userId, firstName, lastName, email);
+
+        return this.authService.updateUser(userId, UpdateUserDto.firstName, UpdateUserDto.lastName, UpdateUserDto.email);
     }
 
     @Delete("deleteUser")
