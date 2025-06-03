@@ -13,6 +13,7 @@ export class challangesController{
         private readonly challangeService: ChallangesService) 
         {}
 
+//---------------------------------Skapaa utmaning-------------------------------------------------------------------//
     @Post("createChallenge/:groupId")
     @UseGuards(JwtAuthGuard)
     async createChallange (
@@ -31,7 +32,7 @@ export class challangesController{
         return {message: "Utmaning skapad", oneChallange}
     }
 
-//----------------------------------------------------------------------------------------------------//
+//----------------------------------------Hämta utmaning------------------------------------------------------------//
     @Get(":challengeId")
     @UseGuards(JwtAuthGuard)
     async getChallangeById(
@@ -43,7 +44,7 @@ export class challangesController{
 
         }
 
-//----------------------------------------------------------------------------------------------------//
+//------------------------------------------Ändra status----------------------------------------------------------//
     @Patch(":challengeId/status")
     @UseGuards(JwtAuthGuard)
     async updateChallangeStatus(

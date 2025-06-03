@@ -8,7 +8,7 @@ import { diskStorage } from "multer";
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  
+// ----------------------------steg---------------------------------------------------------//
   @Get("usersteps")
   @UseGuards(JwtAuthGuard) 
   async getTotalSteps(@Request() req) {

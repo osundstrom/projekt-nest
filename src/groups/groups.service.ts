@@ -46,27 +46,28 @@ export class GroupsService{
             return await groupUser.save(); 
         }
 
-//-------------------------------------GÅ MED I GRUPP---------------------------------------------------------------//
+//-------------------------------------GÅ MED I GRUPP via ID---------------------------------------------------------------//
         async joinGroup(groupId: string, userId: string): Promise<GroupUsers> {
 
+            // Kontrollera om användare redan är medlem i gruppen
             const existingUser = await this.groupUsersModel.findOne({ 
                 group: groupId, 
-                user: userId })
-                
+                user: userId 
+            })
+            if (existingUser) {
+                throw new Error("Du är redan medlem i denna grupp"); 
+            }
 
-                if (existingUser) {
-                    throw new Error("Du är redan medlem i denna grupp"); 
-                }
-
-                const groupUser = new this.groupUsersModel ({
-                    group: groupId,
-                    user: userId,
-                    groupRole: Roles.USER,
-                })
-
-                await this.groupModel.findByIdAndUpdate(groupId, { $inc: { numberMembers: 1 }})
-
-                return await groupUser.save();
+            //skapa en ny gruppanvändare med rollen USER(medlem)
+            const groupUser = new this.groupUsersModel ({
+                group: groupId,
+                user: userId,
+                groupRole: Roles.USER,
+            })
+            
+            // Uppdatera gruppens antal medlemmar
+            await this.groupModel.findByIdAndUpdate(groupId, { $inc: { numberMembers: 1 }})
+            return await groupUser.save();
         } 
 
 
@@ -206,7 +207,7 @@ async deleteGroup(groupId: string, userId: string): Promise<any> {
         await this.challengeUsersModel.deleteMany({ challenge: { $in: challengeIdThisGroup } });
     }
 
-
+    // radera allt tillhörande
     await this.groupUsersModel.deleteMany({ group: groupId });
    
     await this.challengesModel.deleteMany({ group: groupId });

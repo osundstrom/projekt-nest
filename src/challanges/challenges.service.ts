@@ -17,9 +17,8 @@ export class ChallangesService {
   ) {}
 
 
-//----------------------------------------------------------------------------------------------------//
+//-----------------------------------Kontrollera roll-----------------------------------------------------------------//
 
-//måste skapa bättre error medd som skickas för felantering senare.- 
 async checkGroupRole(group: string, user: string): Promise<boolean> {
   console.log("groupId:", group);
   console.log("userId:", user);
@@ -33,7 +32,7 @@ async checkGroupRole(group: string, user: string): Promise<boolean> {
     return groupOwner && groupOwner.groupRole === Roles.OWNER;
 }
 
-//----------------------------------------------------------------------------------------------------//
+//--------------------------------Skapa utmaning--------------------------------------------------------------------//
 
 //måste skapa bättre error medd som skickas för felantering senare.- 
 async createChallange(
@@ -60,7 +59,7 @@ async createChallange(
     return await oneChallange.save()
 }
 
-//----------------------------------------------------------------------------------------------------//
+//-----------------------------------Hämta utmaning-----------------------------------------------------------------//
 async getChallengeById(challengeId: string): Promise<Challenges> {
 
     const challenge = await this.challangeModel.findById(challengeId);
@@ -73,7 +72,7 @@ async getChallengeById(challengeId: string): Promise<Challenges> {
 
   }
 
-  //----------------------------------------------------------------------------------------------------//
+  //------------------------------------------Uppdatera status----------------------------------------------------------//
 
   async updateChallengeStatus(
     challengeId: string, 

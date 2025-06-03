@@ -15,10 +15,13 @@ import { ChallengeUsersModule } from './challengeusers/challengeUsers.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
+    // statiska filer
+    ServeStaticModule.forRoot({ 
       rootPath: `${__dirname}/../uploads`, 
       serveRoot: "/uploads/", 
     }),
+    
+    // config global
     ConfigModule.forRoot({isGlobal: true,}),
     AuthModule, 
     UsersModule, 
@@ -27,9 +30,8 @@ import { ChallengeUsersModule } from './challengeusers/challengeUsers.module';
     StepsModule, 
     ChallangesModule,
     ChallengeUsersModule,
-    MongooseModule.forRoot(process.env.MONGO_URL),
-   
-    
+    MongooseModule.forRoot(process.env.MONGO_URL), //anslutning mongoDB
+
     
   ],
 })

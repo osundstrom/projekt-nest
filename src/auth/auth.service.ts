@@ -21,7 +21,8 @@ export class AuthService{
         private usersService: UsersService,
         private readonly jwtService: JwtService,
     ) {};
-    
+
+//-------------------------------Register--------------------------------------------------//
 async register(
     firstName: string, 
     lastName: string, 
@@ -31,7 +32,7 @@ async register(
     role: Roles
     ) {
 
-    try {
+    try { //kontrollera 
         if (!email.includes('@')) {
             throw new BadRequestException("E-postadressen måste innehålla ett @.");
         }
@@ -46,7 +47,7 @@ async register(
             throw new BadRequestException("Lösenordet måste innehålla minst en siffra.");
         }
         
-        const existUser = await this.userModel.findOne({email});
+        const existUser = await this.userModel.findOne({email}); //kontrollera om användaren finns
         if (existUser) {
             throw new BadRequestException("Användaren finns redan");
         }
@@ -70,7 +71,7 @@ async register(
 
 //----------------------------------------------------------------------------------//
 
-//-----------------------------------------------------------------------------//
+//----------------------Login-------------------------------------------------------//
       async login(email: string, password: string) {
         try {
     
@@ -84,7 +85,8 @@ async register(
             if (!passwordMatch) {
                 throw new Error("ogiltiga uppgifter");
             }
-    
+            
+            //payload 
             const payload = {userId: oneUser._id, name: oneUser.firstName + " " + oneUser.lastName, email: oneUser.email, imageUrl: oneUser.imageUrl};
             const jwtToken = await this.jwtService.signAsync(payload);
 
@@ -94,7 +96,7 @@ async register(
         throw new Error(error.message); //fel vid inlogg
     }}
 
-    //----------------------------------------------------------------------------------//
+    //----------------------------Uppdatera bild------------------------------------------------------//
 
     async updateUserImage(userId: string, imageUrl: string) {
         try {
@@ -105,7 +107,7 @@ async register(
         }
     }
 
-    //----------------------------------------------------------------------------------//
+    //--------------------------------Updatera användare--------------------------------------------------//
 
     async updateUser(userId: string, firstName: string, lastName: string, email: string) {
         try {
@@ -133,7 +135,7 @@ async register(
         }
     }
 
-//------------------------------Radera----------------------------------------------------//
+//------------------------------Radera användare----------------------------------------------------//
 
     async deleteUser(userId: string) {
         
@@ -168,21 +170,22 @@ async register(
         }
     }
 
-//----------------------------------------------------------------------------------//
+//-----------------------------validra oauth-----------------------------------------------------//
     async validateOAuthLogin(user: any) {
         const { googleId, email, firstName, lastName, imageUrl } = user;
 
-        if (!googleId) { 
+        if (!googleId) { // Kontrollera om googleId finns
         console.error("googleId saknas");
         throw new InternalServerErrorException("Kunde inte hämta nödvändig information från Google");
     }
 
         const existingUser = await this.userModel.findOne({ googleId });
 
-        if (existingUser) {
+        if (existingUser) { // Om användaren redan finns
             return existingUser;
         }
 
+        // Skapa en ny användare
         user = await this.userModel.findOne({ email });
         if (user) {
             user.googleId = googleId;
@@ -205,7 +208,7 @@ async register(
         return newUser;
     }
 
-
+//-----------------------------Login OAuth-----------------------------------------------------//
     async loginOAuthUser(user: Users): Promise<{ token: string, payload: any }> {
         
         if (!user || !user._id) {

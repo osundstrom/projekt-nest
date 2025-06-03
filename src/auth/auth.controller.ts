@@ -19,6 +19,7 @@ export class AuthController {
 
     constructor(private authService: AuthService) { }
 
+    //----- registrering -------------------------------------------------------------//
     @Post("register")
     @UseInterceptors(
         FileInterceptor("file", {
@@ -40,14 +41,14 @@ export class AuthController {
         }),
     )
 
-    async register(@Body() registerUserDto: RegisterUserDto ,
+    async register(@Body() registerUserDto: RegisterUserDto,
         @UploadedFile() file: Express.Multer.File) {
         const imageUrl = file ? `/uploads/${file.filename}` : null;
         return this.authService.register(registerUserDto.firstName, registerUserDto.lastName, registerUserDto.email, registerUserDto.password, imageUrl, registerUserDto.role);
     }
 
 
-
+    //----- login -------------------------------------------------------------//
     @Post("login")
     async login(@Body() loginUserDto: LoginUserDto) {
         const user = await this.authService.login(loginUserDto.email, loginUserDto.password);
@@ -56,7 +57,7 @@ export class AuthController {
 
 
 
-
+    // -------- uppdatera bild -------------------------------------------------------------//
     @Patch("updateuserimage")
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(
@@ -86,7 +87,7 @@ export class AuthController {
         return this.authService.updateUserImage(userId, imageUrl);
     }
 
-
+    //----- uppdatera användare -------------------------------------------------------------//
     @Patch("updateUser")
     @UseGuards(JwtAuthGuard)
     async updateUser(
@@ -115,7 +116,7 @@ export class AuthController {
         // startar OAuth (google inloggning)
     }
 
-
+//----- google callback -------------------------------------------------------------//
     @Get("google/callback")
     @UseGuards(AuthGuard("google"))
     async googleAuthRedirect(@Req() req, @Res() res: Response) {

@@ -7,9 +7,7 @@ import { ChallengeUsersService } from './challengeUsers.service';
 export class ChallengeUsersController { 
   constructor(private readonly challengeUsersService: ChallengeUsersService) {} 
 
-  
-
-  
+  //-------hämta alla utmaningar för en användare-------------------------------//
   @Get("challenge/:challengeId")
   @UseGuards(JwtAuthGuard)
   async getAllChallengeSteps(
@@ -18,7 +16,7 @@ export class ChallengeUsersController {
     return this.challengeUsersService.getAllChallengeSteps(challengeId);
   }
 
-
+  //-------lägga till steg -------------------------------//
     @Post(":challengeId/addsteps") 
     @UseGuards(JwtAuthGuard) 
     async addSteps(

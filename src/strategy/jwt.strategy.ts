@@ -12,20 +12,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     
     @InjectModel(Users.name) private readonly userModel: Model<Users>
   ) {
-    super({
+    super({ 
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_KEY,
+      secretOrKey: process.env.JWT_KEY, //från .env filen
     });
   }
 
+  //---------------------------------validate--------------------------------------------------//
   async validate(payload: any): Promise<Users> {
     
+    //söker efter användaren med det id som finns i payload
     const user = await this.userModel.findById(payload.userId).select("firstName lastName email totalSteps imageUrl");
     console.log(user);
     if (!user) {
       throw new Error("användare finns inte");
     }
 
-    return  user ;
+    return  user ; //returnerar användaren
   }
 }

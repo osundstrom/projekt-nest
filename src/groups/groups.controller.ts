@@ -35,8 +35,7 @@ export class GroupController{
 
     }
 
-//--------------------------------------------------------------------------------------------------------------//
-    //POST gå med i en grupp
+//--------------------------------------------Gå med i grupp------------------------------------------------------------------//
     @Post("joinGroup")
     @UseGuards(JwtAuthGuard)
     async joinGroup(
@@ -51,7 +50,7 @@ export class GroupController{
 
     return { message: "Användare tillagd i grupp", groupUser };
     }
-//--------------------------------------------------------------------------------------------------------------//
+//--------------------------------------Grupper medlem i------------------------------------------------------------------------//
     @Get("myGroups")
     @UseGuards(JwtAuthGuard)
     async getGroupsOfUser(
@@ -60,7 +59,7 @@ export class GroupController{
         const groups = await this.groupsService.getGroupsOfUser(userId);
         return { message: "Hämtade grupper", groups };
       }
-//--------------------------------------------------------------------------------------------------------------//
+//--------------------------------------Hämta gruppinfo------------------------------------------------------------------------//
     @Get(":groupId")
     @UseGuards(JwtAuthGuard) 
     async getGroupDetails(
@@ -70,7 +69,7 @@ export class GroupController{
         return this.groupsService.getGroupDetails(groupId, userId);
 }
 
-
+//--------------------------------------Hämta gruppmedlemmar------------------------------------------------------------------//
 @Get(":groupId/members")
   @UseGuards(JwtAuthGuard) 
   async getGroupMembers(
@@ -80,7 +79,8 @@ export class GroupController{
     
     return this.groupsService.getGroupMembers(groupId);
   }
-
+  
+//--------------------------------------Hämta grupputmaningar------------------------------------------------------------------//
   @Get(":groupId/challenges")
   @UseGuards(JwtAuthGuard) 
   async getGroupChallenges(@Param("groupId") groupId: string) {
